@@ -35,17 +35,19 @@ def check_platform(print_switch):
 def check_file_dir(path, error_stop_switch, print_switch):
     is_path_file = os.path.exists(str(path))
     if is_path_file:
-        print_els("[OK] File {0}".format(path), print_switch)
+        if print_switch == "True":
+            print("\r[OK] File {0}                                           .".format(path),end="")
         return "ok"
     else:
-        print_els("[Error] File {0}".format(path), print_switch)
+        if print_switch == "True":
+            print("[Error] File {0}                                           .".format(path),end="")
         if error_stop_switch == "True":
             print_els("残念ながらファイルが存在しません　15秒後にプログラムが終了します", print_switch)
             stop_15_sec(print_switch)
             sys.exit()
         else:
             pass
-        return "error"    
+        return "error"
 
 # Pingで応答来るか
 def check_ping(host, count_els, error_stop_switch, print_switch):

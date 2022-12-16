@@ -11,7 +11,7 @@ def yes_no_input():
         elif choice in ['n', 'no']:
             sys.exit()
 
-def main():
+def main_run():
     els.check_ping("google.com", "3", "True", "True")
     check_dir = els.check_file_dir("minecraft/", "false", "false")
     if (check_dir == "error"):
@@ -27,5 +27,4 @@ def main():
     minecraft.minecraft_port(minecraft_main_port)
     els.global_ip("False", "True")
 
-if __name__ == "__main__":
-    main()
+    print("注意：まだサーバーを起動していません。")

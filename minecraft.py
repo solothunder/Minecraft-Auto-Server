@@ -2,6 +2,7 @@ import urllib.request
 import shutil
 import sys
 import subprocess
+import os
 #同意用プログラム
 def yes_no_input(text):
     while True:
@@ -12,11 +13,26 @@ def yes_no_input(text):
             sys.exit()
 # papermc dl
 def minecraft_download():
-    print("PaperMC ダウンロード中 (V.1.19.2 #307)")
-    url='https://api.papermc.io/v2/projects/paper/versions/1.19.2/builds/307/downloads/paper-1.19.2-307.jar'
-    save_name='minecraft/paper-1.19.2.jar'
-    urllib.request.urlretrieve(url, save_name)
-    print("PaperMC ダウンロード完了")
+    ### ファイル内の文字列を検索・抽出
+    file_name = 'advance_file/minecraft_server_link.txt'
+    file_path = os.path.join(file_name)
+    with open(file_path) as f:
+        lines = f.readlines()
+    minecraft_server_version = input("どのバージョンにしますか？(例:1.19.2)：")
+    # 入力情報に対してmatch caseで対応
+    match minecraft_server_version:
+        case "1.19.3": minecraft_server_link_lines = 0
+        case "1.19.2": minecraft_server_link_lines = 1
+        case "1.19": minecraft_server_link_lines = 2
+        case "1.12.2": minecraft_server_link_lines = 3
+        case "1.8.9": minecraft_server_link_lines = 4
+        case _: 
+            minecraft_server_link_lines = 0
+            minecraft_server_version = "デフォルト 1.19.3"
+    print("サーバーダウンロード中 (V."+minecraft_server_version+")")
+    save_name='minecraft/server.jar'
+    urllib.request.urlretrieve(lines[minecraft_server_link_lines], save_name)
+    print("サーバーダウンロード完了")
 # 入れた情報がいいかどうか？
 def minecraft_install_yes_no(port):
     if not port:
@@ -30,13 +46,12 @@ def minecraft_eula_edit():
     print("Minecraft EULA（使用許諾契約 / 利用許諾契約）に同意しますか？")
     print("MinecraftのEULA は https://www.minecraft.net/ja-jp/terms/r3 こちらを参照してください。")
     yes_no_input("同意しますか? 'yes' か 'no' [y/N]: ")
-    shutil.copyfile("temp/eula.txt", "minecraft/eula.txt")
+    shutil.copyfile("advance_file/eula.txt", "minecraft/eula.txt")
     print("同意しました。")
 # minecraft 実行
 def minecraft_exec(xmx, xms):
     print("サーバー起動")
-    print("java -jar -Xmx"+xmx+"G -Xms"+xms+"M minecraft\paper-1.19.2.jar --nogui")
-    cmd = "java -Xmx"+xmx+"G -Xms"+xms+"G -jar paper-1.19.2.jar --nogui"
+    cmd = "java -Xmx"+xmx+"G -Xms"+xms+"G -jar server.jar"
     subprocess.call(cmd, shell=True, cwd=r"minecraft/")
     print("サーバー停止")
 # 行編集
@@ -61,11 +76,11 @@ def minecraft_port(port):
         port = "25565"
     else:
         pass
-    path = 'temp/server.properties'
+    path = 'advance_file/server.properties'
     port_text = "server-port="+port+"\n"
     replace_setA = ('server-port=', port_text) # (検索する文字列, 置換後の文字列)
     # call func
     replace_func(path, replace_setA)
-    shutil.copyfile("temp/server.properties", "minecraft/server.properties")
+    shutil.copyfile("advance_file/server.properties", "minecraft/server.properties")
 
     print("ポート設定完了")
